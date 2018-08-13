@@ -1,25 +1,233 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.wstar</groupId>
   <artifactId>wstar-service-center</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
+  <!-- <packaging>jar</packaging> -->
   <name>wstar-service-center</name>
-  <url>http://maven.apache.org</url>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<packaging.type>jar</packaging.type>
+		<!-- spring版本号 -->
+		<spring.version>4.1.2.RELEASE</spring.version>
+		<mybatis.version>3.4.1</mybatis.version>
+		<!-- log4j日志文件管理包版本 -->
+		<slf4j.version>1.6.6</slf4j.version>
   </properties>
-
+  <!--  ======================================== 正式/测试版本  配置文件 ==========================================================  -->
+  <profiles>
+ 	<profile><!-- 测试版本 -->
+ 		<id>test</id>
+		<activation>
+			<activeByDefault>true</activeByDefault>
+		</activation>
+		<distributionManagement>
+			<repository>
+				<id>snapshots</id>
+				<url>http://192.168.1.251:8081/nexus/content/repositories/snapshots/</url>
+				<layout>default</layout>
+			</repository>
+		</distributionManagement>
+		<properties>
+			<env>dev</env>
+			<publish.version>1.0.0-SNAPSHOT</publish.version>
+			<!-- dubbo配置 -->
+			<dubbo.registry.url><![CDATA[192.168.1.120:2181]]></dubbo.registry.url>
+			<dubbo.provider.port><![CDATA[32100]]></dubbo.provider.port>
+			<dubbo.provider.timeout><![CDATA[10000]]></dubbo.provider.timeout>
+			<dubbo.monitor.address><![CDATA[192.168.1.120:7070]]></dubbo.monitor.address>
+			<!-- mysql 配置 -->
+			<mysql.url><![CDATA[jdbc:mysql://120.78.10.151:3306/test-ajdata?useUnicode=true&characterEncoding=UTF-8]]></mysql.url>
+			<mysql.username><![CDATA[root]]></mysql.username>
+			<mysql.password><![CDATA[123456@]]></mysql.password>
+			<!-- redis 配置 -->
+			<redis.configstr><![CDATA[132.232.37.89:6379]]></redis.configstr>
+			<redis.password><![CDATA[zhangyao@20180730]]></redis.password>
+		</properties>
+ 	</profile>
+ 	<profile><!-- 正式版本 -->
+ 		<id>online</id>
+		<activation>
+			<activeByDefault>true</activeByDefault>
+		</activation>
+		<distributionManagement>
+			<repository>
+				<id>snapshots</id>
+				<url>http://192.168.1.251:8081/nexus/content/repositories/snapshots/</url>
+				<layout>default</layout>
+			</repository>
+		</distributionManagement>
+		<properties>
+			<env>dev</env>
+			<publish.version>1.0.0-SNAPSHOT</publish.version>
+			<!-- dubbo配置 -->
+			<dubbo.registry.url><![CDATA[192.168.1.120:2181]]></dubbo.registry.url>
+			<dubbo.provider.port><![CDATA[32100]]></dubbo.provider.port>
+			<dubbo.provider.timeout><![CDATA[10000]]></dubbo.provider.timeout>
+			<dubbo.monitor.address><![CDATA[192.168.1.120:7070]]></dubbo.monitor.address>
+			<!-- mysql 配置 -->
+			<mysql.url><![CDATA[jdbc:mysql://120.78.10.151:3306/test-ajdata?useUnicode=true&characterEncoding=UTF-8]]></mysql.url>
+			<mysql.username><![CDATA[root]]></mysql.username>
+			<mysql.password><![CDATA[123456@]]></mysql.password>
+			<!-- redis 配置 -->
+			<redis.configstr><![CDATA[132.232.37.89:6379]]></redis.configstr>
+			<redis.password><![CDATA[zhangyao@20180730]]></redis.password>
+		</properties>
+ 	</profile>
+  </profiles>
+  <!--  ===============================依赖配置=====================================  -->
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
+  	<!-- spring核心包 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- springframe end -->
+  
+  		<!-- mybatis核心包 -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+		<!-- mybatis/spring包 -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<!-- mysql驱动包 -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.29</version>
+		</dependency>
+  		<!-- 阿里巴巴数据源包 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<!-- 私有工程 -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.1.39</version>
+		</dependency>
+		<!-- RPC -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>dubbo</artifactId>
+			<version>2.4.9</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+			<version>3.4.6</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>com.101tec</groupId>
+			<artifactId>zkclient</artifactId>
+			<version>0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<!-- Jackson Json处理工具包 -->
+		  <dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.4.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.github.pagehelper</groupId>
+		    <artifactId>pagehelper</artifactId>
+		    <version>5.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.utils_max</groupId>
+			<artifactId>utils-max</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	    <dependency>
+	      <groupId>junit</groupId>
+	      <artifactId>junit</artifactId>
+	      <version>3.8.1</version>
+	      <scope>test</scope>
+	    </dependency>
   </dependencies>
 </project>
